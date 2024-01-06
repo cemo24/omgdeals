@@ -1,5 +1,5 @@
 stages:
-  - docker_build_push
+  - build
 
 variables:
   AWS_ACCOUNT_ID: "$AWS_ACCOUNT_ID"
