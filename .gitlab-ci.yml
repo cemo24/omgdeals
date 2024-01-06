@@ -3,7 +3,7 @@ stages:
   - deploy
 
 variables:
-  AWS_ACCOUNT_ID: "$AWS_ACCESS_KEY_ID"
+  AWS_ACCOUNT_ID: "$AWS_ACCOUNT_ID"
   AWS_REGION: "us-east-2"
   ECR_REPOSITORY: "monz"
   ECR_IMAGE_TAG: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
