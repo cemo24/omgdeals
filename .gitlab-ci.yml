@@ -1,6 +1,6 @@
 stages:
   - build
-  - deploy
+ # - deploy
 
 variables:
   AWS_ACCOUNT_ID: "$AWS_ACCOUNT_ID"
@@ -21,7 +21,7 @@ docker_build:
   script:
     - echo "building flask image"
     - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG backend/
-
+    - docker images
 docker_push:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
