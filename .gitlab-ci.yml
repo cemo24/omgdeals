@@ -1,6 +1,5 @@
 stages:
-  - build
-  - deploy
+  - docker_build_push
 
 variables:
   AWS_ACCOUNT_ID: "$AWS_ACCOUNT_ID"
@@ -13,33 +12,15 @@ variables:
 before_script:
   - export PATH=$PATH:/usr/local/bin
 
-docker_build:
+docker_build_push:
   stage: build
+    image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   image: $DOCKER_BUILD_IMAGE
   services:
     - name: docker:dind
   script:
     - echo "building flask image"
     - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG backend/
-    - docker info
-    - docker images
-  artifacts:
-    paths:
-      - /tmp/backend-image.tar
-
-docker_push:
-  stage: deploy
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  services:
-    - name: docker:dind
-  before_script:
-    - echo "Fetching artifact"
-    - mv backend-image.tar /tmp/backend-image.tar
-  script:
-    - tar xf /tmp/backend-image.tar
-    - echo "pushing image to ecr"
     - export DOCKER_HOST=tcp://docker:2375
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-    - docker load -i backend-image.tar
-    - docker images
     - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG
