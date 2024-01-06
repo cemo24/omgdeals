@@ -23,15 +23,20 @@ docker_build:
     - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG backend/
     - docker info
     - docker images
+  artifacts:
+    paths:
+      - backend-image.tar
+
 docker_push:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   services:
     - name: docker:dind
   script:
+    - tar xf backend-image.tar
     - echo "pushing image to ecr"
     - export DOCKER_HOST=tcp://docker:2375
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-    - docker info
+    - docker load -i backend-image.tar
     - docker images
     - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG
