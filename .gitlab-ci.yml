@@ -1,0 +1,30 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  AWS_ACCOUNT_ID: "$AWS_ACCESS_KEY_ID"
+  AWS_REGION: "us-east-2"
+  ECR_REPOSITORY: "monz"
+  ECR_IMAGE_TAG: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+  DOCKER_BUILD_IMAGE: "docker:latest"
+  DOCKER_BUILD_TAG: "$CI_COMMIT_REF_NAME"
+
+before_script:
+  - export PATH=$PATH:/usr/local/bin
+
+docker_build:
+  stage: build
+  image: $DOCKER_BUILD_IMAGE
+  script:
+    - echo "building flask image"
+    - docker build -t $ECR_REPOSITORY:$ECR_IMAGE_TAG backend/
+    - docker tag $ECR_REPOSITORY:$ECR_IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG
+
+docker_push:
+  stage: deploy
+  image: $DOCKER_BUILD_IMAGE
+  script:
+    - echo "pushing image to ecr"
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+    - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG
