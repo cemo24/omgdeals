@@ -17,7 +17,7 @@ docker_build:
   stage: build
   image: $DOCKER_BUILD_IMAGE
   services:
-    - "docker:dind"
+    - docker
   script:
     - echo "building flask image"
     - docker build -t $ECR_REPOSITORY:$ECR_IMAGE_TAG backend/
@@ -27,7 +27,7 @@ docker_push:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   services:
-    - "docker:dind"
+    - docker
   script:
     - echo "pushing image to ecr"
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
