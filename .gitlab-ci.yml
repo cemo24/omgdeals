@@ -1,5 +1,6 @@
 stages:
   - build
+  - deploy-frontend
 
 variables:
   AWS_ACCOUNT_ID: "$AWS_ACCOUNT_ID"
@@ -23,3 +24,14 @@ docker_build_push:
     - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG backend/
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
     - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG
+  only:
+    ignore-now
+    
+pages:
+  stage: deploy-frontend
+  script:
+    - mkdir .public
+    - cp -r frontend/* .public
+  artifacts:
+    paths:
+      - .public
