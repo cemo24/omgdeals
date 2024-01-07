@@ -29,9 +29,10 @@ docker_build_push:
 
 pages:
   stage: deploy-frontend
+  image: node:lts
   script:
-    - mkdir .public
-    - cp -r frontend/* .public
+    - mkdir public
+    - cp -r frontend/* public
   artifacts:
     paths:
-      - .public
+      - public
