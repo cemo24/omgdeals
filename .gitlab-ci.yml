@@ -28,7 +28,7 @@ docker_build_push:
     - ignore-now
 
 pages:
-  image: node:lts
+  image: node:14
   stage: deploy-frontend
   variables:
     GIT_STRATEGY: clone
@@ -36,9 +36,29 @@ pages:
   script:
     - mkdir public
     - cd frontend
-    - touch index.html
-    - echo "hello world" > index.html
-    - mv index.html ../public
+    - yarn install
+    - yarn build
+    - mv build ../public
+  artifacts:
+    paths:
+      - public
+
+
+
+ 
+pages:
+  variables:
+    GIT_STRATEGY: clone
+    PUBLIC_URL: https://apps-themonz-3f6f07533c6e2514c588f61486cf485ee35e9b6c32ca58a286.gitlab.io
+  stage: deploy-frontend
+  before_script:
+  - cd frontend
+  - CI=false npm install
+  script:
+    - CI=false npm run build
+    - mkdir ../public
+    - mv build/* ../public
+    - export
   artifacts:
     paths:
       - public
