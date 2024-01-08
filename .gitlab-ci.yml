@@ -36,9 +36,9 @@ pages:
   script:
     - mkdir public
     - cd frontend
-    - yarn install
-    - yarn build
-    - mv build ../public
+    - touch index.html
+    - echo "hello world" > index.html
+    - mv index.html ../public
   artifacts:
     paths:
       - public
