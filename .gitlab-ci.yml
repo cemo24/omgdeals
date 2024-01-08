@@ -26,27 +26,9 @@ docker_build_push:
     - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$ECR_IMAGE_TAG
   only:
     - ignore-now
-
-pages:
-  image: node:14
-  stage: deploy-frontend
-  variables:
-    GIT_STRATEGY: clone
-    PUBLIC_URL: https://apps-themonz-3f6f07533c6e2514c588f61486cf485ee35e9b6c32ca58a286.gitlab.io
-  script:
-    - mkdir public
-    - cd frontend
-    - yarn install
-    - yarn build
-    - mv build ../public
-  artifacts:
-    paths:
-      - public
-
-
-
  
 pages:
+  image: node:14
   variables:
     GIT_STRATEGY: clone
     PUBLIC_URL: https://apps-themonz-3f6f07533c6e2514c588f61486cf485ee35e9b6c32ca58a286.gitlab.io
