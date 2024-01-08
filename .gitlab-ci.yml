@@ -28,11 +28,17 @@ docker_build_push:
     - ignore-now
 
 pages:
-  stage: deploy-frontend
   image: node:lts
+  stage: deploy-frontend
+  variables:
+    GIT_STRATEGY: none
+    PUBLIC_URL: https://apps-themonz-3f6f07533c6e2514c588f61486cf485ee35e9b6c32ca58a286.gitlab.io
   script:
     - mkdir public
-    - cp -r frontend/* public
+    - cd frontend
+    - yarn install
+    - yarn build
+    - mv build ../public
   artifacts:
     paths:
       - public
