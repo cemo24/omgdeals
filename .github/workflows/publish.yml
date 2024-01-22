@@ -1,0 +1,29 @@
+name: publish frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 14s
+      - run: |
+          cd frontend
+          npm install
+      - run: |
+          cd frontend
+          npm run build
+      - name: deploy pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: main
+          FOLDER: frontend/build
+
