@@ -11,9 +11,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v14
         with:
-          node-version: 14s
+          node-version: 14
       - run: |
           cd frontend
           npm install
