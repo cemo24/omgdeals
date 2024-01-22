@@ -23,7 +23,7 @@ jobs:
       - name: deploy pages
         uses: JamesIves/github-pages-deploy-action@4.1.2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: main
-          FOLDER: frontend/build
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          folder: frontend/build
 
