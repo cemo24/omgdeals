@@ -15,8 +15,7 @@ jobs:
         with:
           node-version: '16'
       - run: |
-          ls
-          cd $GITHUB_WORKSPACE
+          cd frontend
           ls
 #          cd frontend
 #          npm install
