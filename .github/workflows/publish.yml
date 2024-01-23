@@ -15,15 +15,18 @@ jobs:
         with:
           node-version: '16'
       - run: |
-          cd frontend
-          npm install
-      - run: |
-          cd frontend
-          npm run build
-      - name: deploy pages
-        uses: JamesIves/github-pages-deploy-action@4.1.2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          folder: frontend/build
-
+          ls
+          cd $GITHUB_WORKSPACE
+          ls
+#          cd frontend
+#          npm install
+#      - run: |
+#          cd frontend
+#          npm run build
+#      - name: deploy pages
+#        uses: JamesIves/github-pages-deploy-action@4.1.2
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: main
+#          folder: frontend/build
+#
