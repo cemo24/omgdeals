@@ -25,12 +25,12 @@ public class Main {
         }
 
         HashMap<String, Double> unfilteredUpcs = (HashMap<String, Double>) unpickledUpcs;
-
-        //******* FOR TESTING REMOVE AFTER ********
-        unfilteredUpcs = Map.of("710425671272",200.00);
-        //******* FOR TESTING REMOVE AFTER ********
-
         HashMap<String, Double> upcs = getFilteredUpcs(unfilteredUpcs);
+
+        //******* FOR TESTING REMOVE AFTER ********
+        upcs = new HashMap<String, Double>() {{put("710425671272", 200.00);}};
+        //******* FOR TESTING REMOVE AFTER ********
+
         TreeMap<String, Double> sortedUpcs = new TreeMap<>(upcs);
 
 
