@@ -25,8 +25,14 @@ public class Main {
         }
 
         HashMap<String, Double> unfilteredUpcs = (HashMap<String, Double>) unpickledUpcs;
+
+        //******* FOR TESTING REMOVE AFTER ********
+        unfilteredUpcs = Map.of("710425671272",200.00);
+        //******* FOR TESTING REMOVE AFTER ********
+
         HashMap<String, Double> upcs = getFilteredUpcs(unfilteredUpcs);
         TreeMap<String, Double> sortedUpcs = new TreeMap<>(upcs);
+
 
         int totalStores = RequestParams.STORES.size(), totalUpcs = upcs.size();
         logger.info(String.format("Total UPCs: %d Total Stores: %d", totalUpcs, totalStores));
@@ -140,14 +146,21 @@ public class Main {
         Double listPrice = result.getListPrice();
         Double storePrice = result.getStorePrice();
 
-        // missing return price
-        if(storePrice == null || storePrice == 0.0){
+        //******* FOR TESTING REMOVE AFTER ********
+        if(storePrice != null){
             return true;
-        }
-        // 50% clearance or better
-        if(storePrice > listPrice){
+            //******* FOR TESTING REMOVE AFTER ********
+
+
+
+//        // missing return price
+//        if(storePrice == null || storePrice == 0.0){
+//            return true;
+//        }
+//        // 50% clearance or better
+//        if(storePrice > listPrice){
 //            if(storePrice * 2 > listPrice){
-                return true;
+//                return true;
         }
         return false;
     }
