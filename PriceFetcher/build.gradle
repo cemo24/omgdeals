@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'org.monzon'
@@ -30,6 +31,10 @@ dependencies {
     implementation 'software.amazon.awssdk:sqs:2.23.0'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+}
+
+application {
+    mainClass = 'org.monzon.Wally.Main'
 }
 
 test {
