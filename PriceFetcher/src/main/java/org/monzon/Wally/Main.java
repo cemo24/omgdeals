@@ -1,14 +1,15 @@
 package org.monzon.Wally;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
 
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -17,10 +18,10 @@ public class Main {
 
         int proxyIndex = 0, pxIndex = 0, upcIndex = 0, wmheadersIndex = 0, seatCounter = 0;
 
-        Object unpickledUpcs = FileUtils.unpickleFile(Config.UPC_PATH);
+        Object unpickledUpcs = FileUtils.unpickleFile(System.getenv("UPC_PATH"));
 
         if (!(unpickledUpcs instanceof HashMap)) {
-            logger.log(java.util.logging.Level.SEVERE, "Cannot unpickle UPCs");
+            logger.error("Cannot unpickle UPCs");
             throw new IOException("Cannot unpickle UPCs");
         }
 
@@ -59,7 +60,7 @@ public class Main {
                     taskList.add(new TaskOkHttp(upc.getKey(), upc.getValue(), store, pxIt, proxyIt, wmheadersIt)); //"810045687674", 1.99, "2588", px, proxy
 
                 } catch (Exception e) {
-                    logger.log(java.util.logging.Level.SEVERE, "Error Processing taskList", e);
+                    logger.error("Error Processing taskList", e);
                     continue;
                 }
 
@@ -82,11 +83,10 @@ public class Main {
                             if (resultFilterCheck(result)) {
                                 continue;
                             }
-
                             latestResults.add(result);
 
                         } catch(Exception e){
-                            logger.log(java.util.logging.Level.SEVERE, "Error Processing Task", e);
+                            logger.error("Error Processing Task", e);
                         }
                     }
                     seatCounter = 0;
@@ -108,7 +108,7 @@ public class Main {
                 logger.info("Threads Not Complete");
             }
         } catch (InterruptedException e) {
-            logger.log(Level.WARNING, "Threads Interrupted", e);
+            logger.warn("Threads Interrupted", e);
         }
         logger.info("Finished Fetching Prices");
     }
@@ -148,7 +148,7 @@ public class Main {
 
         //******* FOR TESTING REMOVE AFTER ********
         if(storePrice != null){
-            return true;
+            return false;
             //******* FOR TESTING REMOVE AFTER ********
 
 

@@ -2,26 +2,31 @@ package org.monzon.Wally;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SqsMessenger {
-
-    private static final Logger logger = Logger.getLogger(SqsMessenger.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SqsMessenger.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private static SqsMessenger instance;
     private SqsClient client;
+    private static String SQS_URL;
 
     private SqsMessenger() {
         client = SqsClient.builder()
                 .region(Region.US_EAST_2)
-                .credentialsProvider(DefaultCredentialsProvider.create())
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .build();
+
+        SQS_URL = System.getenv("SQS_URL");
     }
 
     public static SqsMessenger getInstance() {
@@ -45,7 +50,7 @@ public class SqsMessenger {
             client.sendMessage(request);
             return true;
         } catch (Exception e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error Sending to SQS", e);
+            logger.error("Error Sending to SQS", e);
             return false;
         }
     }
@@ -54,14 +59,14 @@ public class SqsMessenger {
         try {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            logger.log(java.util.logging.Level.SEVERE, "Object to String Conversion Error", e);
+            logger.error("Object to String Conversion Error", e);
             return "";
         }
     }
 
     public void sendBatchMessages(List<Wmdata> latestResults){
         for(var res: latestResults){
-            instance.sendMessage(Config.SQS_URL, instance.convertObjectToMessage(res));
+            instance.sendMessage(SQS_URL, instance.convertObjectToMessage(res));
         }
         logger.info("Message Batch Sent to SQS");
         latestResults.clear();

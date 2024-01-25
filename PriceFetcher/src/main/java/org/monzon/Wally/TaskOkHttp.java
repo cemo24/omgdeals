@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import java.util.zip.ZipException;
@@ -23,6 +22,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import okhttp3.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @AllArgsConstructor
 @Getter
@@ -35,7 +37,7 @@ public class TaskOkHttp implements Callable<Wmdata>
     private final ProxyCreds proxy;
     private final Map<String, String> wm_headers;
 
-    private final Logger logger = Logger.getLogger(TaskOkHttp.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TaskOkHttp.class);
 
     @Override
     public Wmdata call() throws Exception
@@ -76,7 +78,7 @@ public class TaskOkHttp implements Callable<Wmdata>
         try{
             response = client.newCall(rep2).execute();
         }catch(HttpTimeoutException e){
-            logger.log(java.util.logging.Level.SEVERE, String.format("Timeout exception: %s", proxy.getIp()), e);
+            logger.error(String.format("Timeout exception: %s", proxy.getIp()), e);
             return new Wmdata(null, null, 0, null, null, 0);
         }
 
@@ -84,7 +86,7 @@ public class TaskOkHttp implements Callable<Wmdata>
         try{
             gzip = new GZIPInputStream(new ByteArrayInputStream(response.body().bytes()));//response.getBody()));
         }catch(ZipException e){
-            logger.log(java.util.logging.Level.SEVERE, String.format("GZIP Error: %s", proxy.getIp()), e);
+            logger.error(String.format("GZIP Error: %s", proxy.getIp()), e);
             throw new ZipException();
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
@@ -102,7 +104,7 @@ public class TaskOkHttp implements Callable<Wmdata>
         try{
             jsonElement = JsonParser.parseString(wow).getAsJsonObject();
         }catch(IllegalStateException e){
-            logger.log(java.util.logging.Level.SEVERE, String.format("Response Json Parse Error", proxy.getIp()), e);
+            logger.error(String.format("Response Json Parse Error", proxy.getIp()), e);
             throw new IllegalStateException("Error not able to parse response as json");
         }
         JsonArray items = jsonElement.getAsJsonObject("data").getAsJsonObject("contentLayout").getAsJsonArray("modules");
