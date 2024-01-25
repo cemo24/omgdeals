@@ -2,6 +2,20 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+    AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+    AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+    UPC_PATH=${UPC_PATH} \
+    SQS_URL=${SQS_URL} \
+    FETCH_URL=${FETCH_URL}
+
 COPY build/libs/*.jar pricefetcher.jar
 
-CMD ["java", "-jar", "pricefetcher.jar"]
+CMD java -jar \
+    -DAWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+    -DAWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+    -DAWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+    -DUPC_PATH=${UPC_PATH} \
+    -DSQS_URL=${SQS_URL} \
+    -DFETCH_URL=${FETCH_URL} \
+    pricefetcher.jar
