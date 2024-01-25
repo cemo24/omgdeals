@@ -10,17 +10,25 @@ jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '16'
-      - run: |
+
+      - name: Install dependencies
+        run: |
           cd frontend
           npm install
-      - run: |
+
+      - name: Build frontend
+        run: |
           cd frontend
           npm run build
-      - name: deploy pages
+
+      - name: Deploy pages
         uses: JamesIves/github-pages-deploy-action@4.1.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,19 +38,26 @@ jobs:
   build-push-pricefetcher:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
-      - env:
+
+      - name: Set up env variables
+        env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           UPC_PATH: ${{ secrets.UPC_PATH }}
           SQS_URL: ${{ secrets.SQS_URL }}
           FETCH_URL: ${{ secrets.FETCH_URL }}
-      - run: |
+
+      - name: Build and push Docker image
+        run: |
           cd PriceFetcher
           ./gradlew build
           cd PriceFetcher
