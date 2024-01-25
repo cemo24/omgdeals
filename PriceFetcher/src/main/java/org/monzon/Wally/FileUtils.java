@@ -13,7 +13,7 @@ public class FileUtils {
     protected static Object unpickleFile(String filePath) {
         Object unpickledObject;
 
-        try (InputStream is = FileUtils.class.getResourceAsStream(filePath)) {
+        try (InputStream is = FileUtils.class.getResourceAsStream("/upc_price.pickle")) {
             if (is != null) {
                 net.razorvine.pickle.Unpickler unpickler = new net.razorvine.pickle.Unpickler();
                 unpickledObject = unpickler.load(is);
