@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 @Getter
 public class TaskOkHttp implements Callable<Wmdata>
 {
+    private final retailer = "WM";
     private final String upc;
     private final Double listPrice;
     private final String store;
@@ -79,7 +80,7 @@ public class TaskOkHttp implements Callable<Wmdata>
             response = client.newCall(rep2).execute();
         }catch(HttpTimeoutException e){
             logger.error(String.format("Timeout exception: %s", proxy.getIp()), e);
-            return new Wmdata(null, null, 0, null, null, 0);
+            return new Wmdata(null, null, null, null, 0, null, null, 0);
         }
 
         GZIPInputStream gzip;
@@ -96,7 +97,7 @@ public class TaskOkHttp implements Callable<Wmdata>
 
         if(wow == null){
             logger.info("Response Body Empty");
-            return new Wmdata(null, null, 0, null, null, 0);
+            return new Wmdata(null, null, null, null, 0, null, null, 0);
         }
 
 
@@ -227,9 +228,10 @@ public class TaskOkHttp implements Callable<Wmdata>
                 if (!availability.equals("OUT_OF_STOCK")) {
                     stock = 1;
                 }
-                return new Wmdata(upc, store, stock, listPrice, lowestStorePrice, Instant.now().getEpochSecond());
+                String key = upc + store + retailer;
+                return new Wmdata(key, upc, store, retailer, stock, listPrice, lowestStorePrice, Instant.now().getEpochSecond());
             }
         }
-        return new Wmdata(null, null, 0, null, null, 0);
+        return new Wmdata(null, null, null, null, 0, null, null, 0);
     }
 }

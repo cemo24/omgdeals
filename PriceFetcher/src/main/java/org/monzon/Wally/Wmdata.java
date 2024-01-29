@@ -5,8 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public class Wmdata{
+    @Getter private final String upc_store_retailer;
     @Getter private final String upc;
     @Getter private final String store;
+    @Getter private final String retailer;
     @Getter private final int stock;
     @Getter private Double listPrice;
     @Getter private final Double storePrice;

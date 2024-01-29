@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_16
+//    targetCompatibility = JavaVersion.VERSION_16
+//}
+
+group 'org.monzon'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    implementation 'software.amazon.awssdk:sqs:2.23.0'
+    implementation 'software.amazon.awssdk:dynamodb:2.23.0'
+    implementation 'software.amazon.awssdk:core:2.23.0'
+    implementation 'software.amazon.awssdk:auth:2.23.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    implementation 'ch.qos.logback:logback-classic:1.2.6'
+}
+
+application {
+    mainClassName = 'org.monzon.Main'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.monzon.Main'
+        )
+    }
+
+    duplicatesStrategy = 'exclude'
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
