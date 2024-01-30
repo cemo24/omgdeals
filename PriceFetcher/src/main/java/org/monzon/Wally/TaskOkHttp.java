@@ -201,8 +201,7 @@ public class TaskOkHttp implements Callable<Wmdata>
                         store_price_element = store_price_element_a.getAsJsonObject("currentPrice").getAsJsonPrimitive("priceString");
                         store_price_string = store_price_element.getAsString();
                     }
-
-
+                    
                     if (store_price_string.equals("See price in cart") || store_price_element==null) {
 
                         if(store_price_element_a.getAsJsonObject("currentPrice").get("price").isJsonNull()){
@@ -228,7 +227,7 @@ public class TaskOkHttp implements Callable<Wmdata>
                 if (!availability.equals("OUT_OF_STOCK")) {
                     stock = 1;
                 }
-                String key = upc + store + retailer;
+                String key = upc + "_" + store + "_" + retailer;
                 return new Wmdata(key, upc, store, retailer, stock, listPrice, lowestStorePrice, Instant.now().getEpochSecond());
             }
         }
