@@ -17,6 +17,16 @@ public class Wmdata{
     @Getter private final Double storePrice;
     @Getter private final long timestamp;
 
+    public Wmdata() {
+        this.upc_store_retailer = null;
+        this.upc = null;
+        this.store = null;
+        this.retailer = null;
+        this.stock = 0;
+        this.listPrice = null;
+        this.storePrice = null;
+        this.timestamp = 0L;
+    }
 
     public Map<String, AttributeValue> toMap() {
         return Map.of(
