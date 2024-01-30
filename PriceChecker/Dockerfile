@@ -1,0 +1,17 @@
+FROM adoptopenjdk:16-jre-hotspot
+
+WORKDIR /app
+
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+    AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+    AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+    SQS_URL=${SQS_URL}
+
+COPY build/libs/*.jar pricechecker.jar
+
+CMD java -jar \
+    -DAWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+    -DAWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+    -DAWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+    -DSQS_URL=${SQS_URL} \
+    pricechecker.jar
