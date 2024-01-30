@@ -61,10 +61,14 @@ public class SqsMessenger {
 
             for (Message message : messages) {
                 Wmdata messageObject;
+
+                logger.info("message body:");
+                logger.info(message.body());
+
                 try {
                     messageObject = mapper.readValue(message.body(), Wmdata.class);
                 } catch (JsonProcessingException e) {
-                    logger.error("Error Mapping From SQS");
+                    logger.error("Error Mapping From SQS", e);
                     continue;
                 }
                 receivedMessages.add(messageObject);
