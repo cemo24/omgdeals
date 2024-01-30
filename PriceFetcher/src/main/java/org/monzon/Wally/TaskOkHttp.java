@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 @Getter
 public class TaskOkHttp implements Callable<Wmdata>
 {
-    private final retailer = "WM";
+    private final String retailer = "WM";
     private final String upc;
     private final Double listPrice;
     private final String store;
