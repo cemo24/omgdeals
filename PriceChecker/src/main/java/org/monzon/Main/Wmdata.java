@@ -23,6 +23,7 @@ public class Wmdata{
                 "upc_store_retailer", AttributeValue.builder().s(upc_store_retailer).build(),
                 "upc", AttributeValue.builder().s(upc).build(),
                 "store", AttributeValue.builder().s(store).build(),
+                "retailer", AttributeValue.builder().s(store).build(),
                 "stock", AttributeValue.builder().n(String.valueOf(stock)).build(),
                 "listPrice", AttributeValue.builder().n(String.valueOf(listPrice)).build(),
                 "storePrice", AttributeValue.builder().n(String.valueOf(storePrice)).build(),
