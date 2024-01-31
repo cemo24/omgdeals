@@ -42,8 +42,11 @@ public class DynamoClient {
         List<Map<String, AttributeValue>> fetchedKeys = new ArrayList<>();
 
         for (Wmdata wmdata : messages) {
+            if(wmdata.getUpc_store_retailer() == null || wmdata.getUpc_store_retailer().isEmpty()){
+                continue;
+            }
             Map<String, AttributeValue> key = new HashMap<>();
-            key.put("upc-store-retailer", AttributeValue.builder().s(wmdata.getUpc_store_retailer()).build());
+            key.put("upc_store_retailer", AttributeValue.builder().s(wmdata.getUpc_store_retailer()).build());
             fetchedKeys.add(key);
         }
 
@@ -54,6 +57,7 @@ public class DynamoClient {
                                 .build())).build();
 
         BatchGetItemResponse batchGetItemResponse = this.client.batchGetItem(batchGetItemRequest);
+
         List<Map<String, AttributeValue>> existingItems = batchGetItemResponse.responses().get(TABLE_NAME);
 
         List<Wmdata> formattedItems = new ArrayList<>();
@@ -61,10 +65,10 @@ public class DynamoClient {
         for (Wmdata newItem : messages) {
 
             Wmdata itemExists = existingItems.stream()
-                    .filter(item -> newItem.getUpc_store_retailer().equals(item.get("upc-store-retailer").s()))
+                    .filter(item -> newItem.getUpc_store_retailer().equals(item.get("upc_store_retailer").s()))
                     .findFirst()
                     .map(item -> new Wmdata(
-                            item.get("upc-store-retailer").s(),
+                            item.get("upc_store_retailer").s(),
                             item.get("upc").s(),
                             item.get("store").s(),
                             item.get("retailer").s(),

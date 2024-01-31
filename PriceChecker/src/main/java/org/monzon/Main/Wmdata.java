@@ -18,13 +18,13 @@ public class Wmdata{
     @Getter private final long timestamp;
 
     public Wmdata() {
-        this.upc_store_retailer = null;
-        this.upc = null;
-        this.store = null;
-        this.retailer = null;
+        this.upc_store_retailer = "";
+        this.upc = "";
+        this.store = "";
+        this.retailer = "";
         this.stock = 0;
-        this.listPrice = null;
-        this.storePrice = null;
+        this.listPrice = 0.0;
+        this.storePrice = 0.0;
         this.timestamp = 0L;
     }
 
@@ -33,7 +33,7 @@ public class Wmdata{
                 "upc_store_retailer", AttributeValue.builder().s(upc_store_retailer).build(),
                 "upc", AttributeValue.builder().s(upc).build(),
                 "store", AttributeValue.builder().s(store).build(),
-                "retailer", AttributeValue.builder().s(store).build(),
+                "retailer", AttributeValue.builder().s(retailer).build(),
                 "stock", AttributeValue.builder().n(String.valueOf(stock)).build(),
                 "listPrice", AttributeValue.builder().n(String.valueOf(listPrice)).build(),
                 "storePrice", AttributeValue.builder().n(String.valueOf(storePrice)).build(),

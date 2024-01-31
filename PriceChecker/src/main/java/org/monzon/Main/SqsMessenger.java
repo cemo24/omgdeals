@@ -8,6 +8,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,16 +63,21 @@ public class SqsMessenger {
             for (Message message : messages) {
                 Wmdata messageObject;
 
-                logger.info("message body:");
-                logger.info(message.body());
-
                 try {
                     messageObject = mapper.readValue(message.body(), Wmdata.class);
+                    receivedMessages.add(messageObject);
                 } catch (JsonProcessingException e) {
                     logger.error("Error Mapping From SQS", e);
                     continue;
                 }
-                receivedMessages.add(messageObject);
+
+                //delete message from sqs
+                DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
+                        .queueUrl(SQS_URL)
+                        .receiptHandle(message.receiptHandle())
+                        .build();
+                client.deleteMessage(deleteRequest);
+
             }
         }
         return receivedMessages;
