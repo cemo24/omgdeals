@@ -1,92 +1,114 @@
 package org.monzon.Wally;
 
+import com.google.gson.*;
+import lombok.Setter;
+import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.net.http.*;
+import java.net.http.HttpTimeoutException;
 import java.time.Instant;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
-
 import java.util.zip.ZipException;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+@Component
+@Setter
+public class TaskOkHttp implements Callable<Wmdata>{
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import okhttp3.*;
+    private OkHttpClient okHttpClient;
+    private Request.Builder requestBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-@AllArgsConstructor
-@Getter
-public class TaskOkHttp implements Callable<Wmdata>
-{
     private final String retailer = "WM";
-    private final String upc;
-    private final Double listPrice;
-    private final String store;
-    private final String px_header;
-    private final ProxyCreds proxy;
-    private final Map<String, String> wm_headers;
+    private String upc;
+    private Double listPrice;
+    private String store;
+    private String px_header;
+    private ProxyCreds proxy;
+    private Map<String, String> wm_headers;
 
     private static final Logger logger = LoggerFactory.getLogger(TaskOkHttp.class);
+    public TaskOkHttp createTaskOkHttp() {
+        return new TaskOkHttp(okHttpClient, requestBuilder);
+    }
+
+    @Autowired
+    public TaskOkHttp(OkHttpClient okHttpClient, Request.Builder requestBuilder) {
+        this.okHttpClient = okHttpClient;
+        this.requestBuilder = requestBuilder;
+    }
+//
+//    public void setUpc(String upc) {
+//        this.upc = upc;
+//    }
+//
+//    public void setListPrice(Double listPrice) {
+//        this.listPrice = listPrice;
+//    }
+//    public void setStore(String store) {
+//        this.store = store;
+//    }
+//    public void setPx_header(String px_header) {
+//        this.px_header = px_header;
+//    }
+//    public void setProxy(ProxyCreds proxy) {
+//        this.proxy = proxy;
+//    }
+//    public void setWm_headers(Map<String, String> wm_headers) {
+//        this.wm_headers = wm_headers;
+//    }
+
 
     @Override
-    public Wmdata call() throws Exception
-    {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectionPool(new ConnectionPool(30, 5, TimeUnit.SECONDS))
-                //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy.getIp(), proxy.getPort())))
-                .build();
-
-//        String refId= UUID.randomUUID().toString()
-//        String deviceId = wm_headers.get("x-o-platform-version");
-
-        String url = RequestParams.getUrl(upc);
+    public Wmdata call() throws Exception {
 
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
-        var request = new Request.Builder()
-                .url(url)
-                .method("GET", null);
 
         wm_headers.remove("wm_instore_id");
         wm_headers.put("wm_instore_id", store);
 
         for (Map.Entry<String, String> entry : wm_headers.entrySet()) {
-            if(entry.getKey().equals("wm_instore_id")){
-                request.addHeader(entry.getKey(), store);
+            if (entry.getKey().equals("wm_instore_id")) {
+                requestBuilder.addHeader(entry.getKey(), store);
                 continue;
             }
-            if(entry.getKey().equals("url")){continue;}
-            request.addHeader(entry.getKey(), entry.getValue());
+            if (entry.getKey().equals("url")) {
+                continue;
+            }
+            requestBuilder.addHeader(entry.getKey(), entry.getValue());
         }
+        requestBuilder.url(RequestParams.getUrl(upc));
 
-        Request rep2 = request.build();
+        Request rep2 = requestBuilder.build();
 
         String wow;
         Response response;
 
-        try{
-            response = client.newCall(rep2).execute();
-        }catch(HttpTimeoutException e){
+
+        try {
+            //response = client.newCall(rep2).execute();
+            Call ee = okHttpClient.newCall(rep2);
+            response = ee.execute();
+
+            
+        } catch (HttpTimeoutException e) {
             logger.error(String.format("Timeout exception: %s", proxy.getIp()), e);
             return new Wmdata(null, null, null, null, 0, null, null, 0);
         }
 
         GZIPInputStream gzip;
-        try{
+        try {
             gzip = new GZIPInputStream(new ByteArrayInputStream(response.body().bytes()));//response.getBody()));
-        }catch(ZipException e){
+
+        } catch (ZipException e) {
             logger.error(String.format("GZIP Error: %s", proxy.getIp()), e);
             throw new ZipException();
         }
@@ -95,23 +117,21 @@ public class TaskOkHttp implements Callable<Wmdata>
 
         response.close();
 
-        if(wow == null){
+        if (wow == null) {
             logger.info("Response Body Empty");
             return new Wmdata(null, null, null, null, 0, null, null, 0);
         }
 
-
         JsonObject jsonElement;
-        try{
+        try {
             jsonElement = JsonParser.parseString(wow).getAsJsonObject();
-        }catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             logger.error(String.format("Response Json Parse Error", proxy.getIp()), e);
             throw new IllegalStateException("Error not able to parse response as json");
         }
         JsonArray items = jsonElement.getAsJsonObject("data").getAsJsonObject("contentLayout").getAsJsonArray("modules");
 
-
-        for(JsonElement item : items){
+        for (JsonElement item : items) {
 
             Optional<JsonArray> allOffers = Optional.ofNullable(item)
                     .filter(e -> !e.isJsonNull())
@@ -126,19 +146,19 @@ public class TaskOkHttp implements Callable<Wmdata>
                     .map(e -> e.getAsJsonArray());
 
 
-            if(allOffers.isEmpty()){
+            if (allOffers.isEmpty()) {
                 continue;
             }
 
             Double store_price = 0.0, current_price = 0.0;
 
-            for(JsonElement onlyOffer  : allOffers.get()) {
+            for (JsonElement onlyOffer : allOffers.get()) {
 
                 Optional<JsonObject> offerObject = Optional.ofNullable(onlyOffer)
                         .filter(e -> !e.isJsonNull())
                         .map(e -> e.getAsJsonObject());
 
-                if(offerObject.isEmpty()){
+                if (offerObject.isEmpty()) {
                     continue;
                 }
                 JsonObject offer = offerObject.get();
@@ -149,7 +169,7 @@ public class TaskOkHttp implements Callable<Wmdata>
                         .map(e -> e.getAsJsonPrimitive().getAsString())
                         .filter(e -> e.equals("INTERNAL"));
 
-                if(internalSellerCheck.isEmpty()){
+                if (internalSellerCheck.isEmpty()) {
                     continue;
                 }
 
@@ -157,12 +177,12 @@ public class TaskOkHttp implements Callable<Wmdata>
                         .filter(e -> !e.isJsonNull())
                         .map(e -> e.getAsJsonObject());
 
-                if(storePriceElementCheck.isEmpty()){
+                if (storePriceElementCheck.isEmpty()) {
                     continue;
                 }
                 JsonObject store_price_element_a = storePriceElementCheck.get(); //add isjsonnull check
 
-                if(store_price_element_a.isJsonNull()){
+                if (store_price_element_a.isJsonNull()) {
                     continue;
                 }
 
@@ -183,7 +203,7 @@ public class TaskOkHttp implements Callable<Wmdata>
                 }
 
                 JsonElement availabilityStatusMember = onlyOffer.getAsJsonObject().get("availabilityStatus");
-                if(availabilityStatusMember.isJsonNull() || !availabilityStatusMember.isJsonPrimitive()){
+                if (availabilityStatusMember.isJsonNull() || !availabilityStatusMember.isJsonPrimitive()) {
                     continue;
                 }
 
@@ -197,14 +217,14 @@ public class TaskOkHttp implements Callable<Wmdata>
                     String store_price_string = null;
                     JsonPrimitive store_price_element = null;
 
-                    if(!priceStringObject.isJsonNull()){
+                    if (!priceStringObject.isJsonNull()) {
                         store_price_element = store_price_element_a.getAsJsonObject("currentPrice").getAsJsonPrimitive("priceString");
                         store_price_string = store_price_element.getAsString();
                     }
 
-                    if (store_price_string.equals("See price in cart") || store_price_element==null) {
+                    if (store_price_string.equals("See price in cart") || store_price_element == null) {
 
-                        if(store_price_element_a.getAsJsonObject("currentPrice").get("price").isJsonNull()){
+                        if (store_price_element_a.getAsJsonObject("currentPrice").get("price").isJsonNull()) {
                             continue; //no 2price anywhere so next item
                         }
 
@@ -233,4 +253,5 @@ public class TaskOkHttp implements Callable<Wmdata>
         }
         return new Wmdata(null, null, null, null, 0, null, null, 0);
     }
+
 }

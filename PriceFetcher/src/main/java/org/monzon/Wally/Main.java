@@ -1,24 +1,50 @@
 package org.monzon.Wally;
 
+import net.razorvine.pickle.Unpickler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
+@SpringBootApplication
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    @Autowired
+    private SqsMessenger sqs;
 
-        SqsMessenger sqs = SqsMessenger.getInstance();
+    @Autowired
+    private TaskOkHttp tasks;
+
+    @Autowired
+    public Main(TaskOkHttp tasks, SqsMessenger sqs) {
+        this.tasks = tasks;
+        this.sqs = sqs;
+    }
+    public static void main(String[] args){
+        SpringApplication.run(Main.class, args);
+    }
+
+    @PostConstruct
+    public void run() throws IOException, InterruptedException {
+
         List<Wmdata> latestResults = new ArrayList<>();
 
         int proxyIndex = 0, pxIndex = 0, upcIndex = 0, wmheadersIndex = 0, seatCounter = 0;
 
-        Object unpickledUpcs = FileUtils.unpickleFile(System.getenv("UPC_PATH"));
+        Unpickler unpickler = new Unpickler();
+        FileUtils utils = new FileUtils(unpickler);
+
+        Object unpickledUpcs = utils.unpickleFile(System.getenv("UPC_PATH"));
 
         if (!(unpickledUpcs instanceof HashMap)) {
             logger.error("Cannot unpickle UPCs");
@@ -57,8 +83,15 @@ public class Main {
                 var wmheadersIt = RequestParams.getReqHeaders().get(wmheadersIndex % RequestParams.getReqHeaders().size());
 
                 try {
-                    taskList.add(new TaskOkHttp(upc.getKey(), upc.getValue(), store, pxIt, proxyIt, wmheadersIt)); //"810045687674", 1.99, "2588", px, proxy
+                    TaskOkHttp thisTask = tasks.createTaskOkHttp();
+                    thisTask.setUpc(upc.getKey());
+                    thisTask.setListPrice(upc.getValue());
+                    thisTask.setStore(store);
+                    thisTask.setPx_header(pxIt);
+                    thisTask.setProxy(proxyIt);
+                    thisTask.setWm_headers(wmheadersIt);
 
+                    taskList.add(thisTask);
                 } catch (Exception e) {
                     logger.error("Error Processing taskList", e);
                     continue;

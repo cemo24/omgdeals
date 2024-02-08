@@ -12,33 +12,26 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("singleton")
 public class SqsMessenger {
     private static final Logger logger = LoggerFactory.getLogger(SqsMessenger.class);
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static SqsMessenger instance;
-    private SqsClient client;
     private static String SQS_URL;
 
-    private SqsMessenger() {
+    private final SqsClient client;
+
+    public SqsMessenger() {
         client = SqsClient.builder()
                 .region(Region.US_EAST_2)
                 .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
                 .build();
 
         SQS_URL = System.getenv("SQS_URL");
-    }
-
-    public static SqsMessenger getInstance() {
-        if (instance == null) {
-            synchronized (SqsMessenger.class) {
-                if (instance == null) {
-                    instance = new SqsMessenger();
-                    logger.info("SQS Client Initialized");
-                }
-            }
-        }
-        return instance;
+        logger.info("SQS Client Initialized");
     }
 
     public boolean sendMessage(String url, String message) {
@@ -66,7 +59,7 @@ public class SqsMessenger {
 
     public void sendBatchMessages(List<Wmdata> latestResults){
         for(var res: latestResults){
-            instance.sendMessage(SQS_URL, instance.convertObjectToMessage(res));
+            sendMessage(SQS_URL, convertObjectToMessage(res));
         }
         logger.info("Message Batch Sent to SQS");
         latestResults.clear();

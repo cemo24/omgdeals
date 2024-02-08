@@ -1,5 +1,6 @@
 package org.monzon.Wally;
 
+import net.razorvine.pickle.Unpickler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,14 +9,21 @@ import java.io.InputStream;
 
 public class FileUtils {
 
+    private  Unpickler unpickler;
+
+    public FileUtils(Unpickler unpickler){
+        this.unpickler = unpickler;
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
-    protected static Object unpickleFile(String filePath) {
+    protected Object unpickleFile(String filePath) {
         Object unpickledObject;
 
-        try (InputStream is = FileUtils.class.getResourceAsStream("/upc_price.pickle")) {
+        try{
+            InputStream is = getPickleStream("/upc_price.pickle");
             if (is != null) {
-                net.razorvine.pickle.Unpickler unpickler = new net.razorvine.pickle.Unpickler();
+//                Unpickler unpickler = new net.razorvine.pickle.Unpickler();
                 unpickledObject = unpickler.load(is);
             } else {
                 logger.error("File Not Found: {}", filePath);
@@ -27,5 +35,8 @@ public class FileUtils {
         }
 
         return unpickledObject;
+    }
+    protected InputStream getPickleStream(String path){
+        return FileUtils.class.getResourceAsStream(path);
     }
 }
