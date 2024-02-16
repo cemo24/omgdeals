@@ -16,7 +16,7 @@ public class DynamoClient {
     private static String TABLE_NAME = System.getenv("DYNAMO_TABLE");
     private static final Logger logger = LoggerFactory.getLogger(DynamoClient.class);
     private static DynamoClient instance;
-    private DynamoDbClient client;
+    public DynamoDbClient client;
 
     private DynamoClient() {
         client = DynamoDbClient.builder()
@@ -39,6 +39,8 @@ public class DynamoClient {
 
     public List<Wmdata> filterMessages(List<Wmdata> messages){
 
+        logger.info("This is the table name:" + TABLE_NAME);
+
         List<Map<String, AttributeValue>> fetchedKeys = new ArrayList<>();
 
         for (Wmdata wmdata : messages) {
@@ -48,6 +50,10 @@ public class DynamoClient {
             Map<String, AttributeValue> key = new HashMap<>();
             key.put("upc_store_retailer", AttributeValue.builder().s(wmdata.getUpc_store_retailer()).build());
             fetchedKeys.add(key);
+        }
+
+        if(fetchedKeys.isEmpty()){
+            return new ArrayList<>();
         }
 
         BatchGetItemRequest batchGetItemRequest = BatchGetItemRequest.builder()

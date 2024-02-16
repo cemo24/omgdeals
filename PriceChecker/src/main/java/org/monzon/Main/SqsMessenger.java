@@ -48,17 +48,15 @@ public class SqsMessenger {
 
         List<Wmdata> receivedMessages = new ArrayList<>();
         logger.info("SQS - Getting Messages");
-        while (true) {
-            ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
-                    .queueUrl(SQS_URL)
-                    .maxNumberOfMessages(10)
-                    .build();
 
-            List<Message> messages = client.receiveMessage(receiveRequest).messages();
+        ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
+                .queueUrl(SQS_URL)
+                .maxNumberOfMessages(10)
+                .build();
 
-            if (messages.isEmpty()) {
-                break;
-            }
+        List<Message> messages = client.receiveMessage(receiveRequest).messages();
+
+        if (!messages.isEmpty()) {
 
             for (Message message : messages) {
                 Wmdata messageObject;
@@ -71,7 +69,6 @@ public class SqsMessenger {
                     continue;
                 }
 
-                //delete message from sqs
                 DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
                         .queueUrl(SQS_URL)
                         .receiptHandle(message.receiptHandle())
