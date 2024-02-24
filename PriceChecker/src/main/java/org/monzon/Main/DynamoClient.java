@@ -39,20 +39,21 @@ public class DynamoClient {
 
     public List<Wmdata> filterMessages(List<Wmdata> messages){
 
-        Set<String> keysToQuery = new HashSet<>();
+        HashMap<String, Wmdata> recentMessages = new HashMap<>();
+
 
         for (Wmdata wmdata : messages) {
             if(wmdata.getUpc_store_retailer() == null || wmdata.getUpc_store_retailer().isEmpty()){
                 continue;
             }
-            keysToQuery.add(wmdata.getUpc_store_retailer());
+            recentMessages.put(wmdata.getUpc_store_retailer(), wmdata);
         }
 
-        if(keysToQuery.isEmpty()){
+        if(recentMessages.isEmpty()){
             return new ArrayList<>();
         }
 
-        List<Map<String, AttributeValue>> existingItems = keysToQuery.stream()
+        List<Map<String, AttributeValue>> existingItems = recentMessages.keySet().stream()
                 .map(primaryKeyValue -> {
                     QueryRequest queryRequest = QueryRequest.builder()
                             .tableName(TABLE_NAME)
@@ -77,7 +78,9 @@ public class DynamoClient {
                             Integer.parseInt(item.get("stock").n()),
                             Double.parseDouble(item.get("listPrice").n()),
                             Double.parseDouble(item.get("storePrice").n()),
-                            Long.parseLong(item.get("timestamp").n())
+                            Long.parseLong(item.get("timestamp").n()),
+                            item.get("title").s(),
+                            item.get("image").s()
                     );
                     return Map.of(item.get("upc_store_retailer").s(), wmdata).entrySet().stream();
                 })
@@ -85,14 +88,13 @@ public class DynamoClient {
 
         List<Wmdata> formattedItems = new ArrayList<>();
 
-        for (Wmdata newItem : messages) {
-
-            Wmdata itemExists = existingMap.getOrDefault(newItem.getUpc_store_retailer(), null);
-
-            if(itemExists == null || newItem.getStorePrice() < itemExists.getStorePrice()) {
-                formattedItems.add(newItem);
+        for(var message : recentMessages.entrySet()){
+            Wmdata itemExists = existingMap.getOrDefault(message.getKey(), null);
+            if(itemExists == null || message.getValue().getStorePrice() < itemExists.getStorePrice()) {
+                formattedItems.add(message.getValue());
             }
         }
+
         return formattedItems;
     }
 
@@ -111,8 +113,8 @@ public class DynamoClient {
                 .build();
 
         BatchWriteItemResponse response = client.batchWriteItem(batchWriteItemRequest);
-
-        if(response.hasUnprocessedItems()){
+        var unprocessedItems = response.unprocessedItems();
+        if(unprocessedItems.size() > 0){
             logger.error("Batch PUT incomplete");
         }else{
             logger.info("Batch PUT complete");

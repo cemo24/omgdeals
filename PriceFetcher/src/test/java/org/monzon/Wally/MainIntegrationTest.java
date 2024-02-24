@@ -1,14 +1,16 @@
 package org.monzon.Wally;
 
+import net.razorvine.pickle.Unpickler;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -19,27 +21,34 @@ import static org.mockito.Mockito.*;
 public class MainIntegrationTest {
 
     @MockBean
-    SqsMessenger sqs;
+    private SqsMessenger sqs;
 
     @MockBean
-    OkHttpClient okHttpClient;
+    private OkHttpClient okHttpClient;
 
     @MockBean
-    Request.Builder requestBuilder;
+    private Request.Builder requestBuilder;
 
     @MockBean
-    TaskOkHttp taskOkHttp;
+    private TaskOkHttp tasks;
+
+    @MockBean
+    private Unpickler unpickler;
+
+    @MockBean
+    private FileUtils utils;
+
+    @Autowired
+    Runner runner;
 
     @Test
     public void testRun() throws Exception {
+        HashMap<String, Double> mockUpcs = new HashMap<>();
+        mockUpcs.put("123", 100.00);
+        when(utils.unpickleFile()).thenReturn((Object)mockUpcs);
+        when(tasks.call()).thenReturn(new Wmdata("upc_store_retailer", "123", "123", "WM", 1, 19.99, 1.99, 1, "test", "img"));
 
-        when(taskOkHttp.createTaskOkHttp()).thenReturn(taskOkHttp);
-        when(taskOkHttp.call()).thenReturn(new Wmdata("upc_store_retailer", "123", "123", "WM", 1, 19.99, 1.99, 1));
-
-        Main main = new Main(taskOkHttp, sqs);
-        main.run();
-
-        verify(sqs, times(1)).sendBatchMessages(any(ArrayList.class));
-
+        runner.run();
+        verify(sqs, times(7)).sendBatchMessages(anyList());
     }
 }

@@ -16,6 +16,8 @@ public class Wmdata{
     @Getter private Double listPrice;
     @Getter private final Double storePrice;
     @Getter private final long timestamp;
+    @Getter private final String title;
+    @Getter private final String image;
 
     public Wmdata() {
         this.upc_store_retailer = "";
@@ -26,6 +28,8 @@ public class Wmdata{
         this.listPrice = 0.0;
         this.storePrice = 0.0;
         this.timestamp = 0L;
+        this.title = "";
+        this.image = "";
     }
 
     public Map<String, AttributeValue> toMap() {
@@ -37,7 +41,9 @@ public class Wmdata{
                 "stock", AttributeValue.builder().n(String.valueOf(stock)).build(),
                 "listPrice", AttributeValue.builder().n(String.valueOf(listPrice)).build(),
                 "storePrice", AttributeValue.builder().n(String.valueOf(storePrice)).build(),
-                "timestamp", AttributeValue.builder().n(String.valueOf(timestamp)).build()
+                "timestamp", AttributeValue.builder().n(String.valueOf(timestamp)).build(),
+                "title", AttributeValue.builder().s(String.valueOf(title)).build(),
+                "image", AttributeValue.builder().s(String.valueOf(image)).build()
         );
     }
 }

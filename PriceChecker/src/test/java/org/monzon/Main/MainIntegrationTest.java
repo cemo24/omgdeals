@@ -8,10 +8,7 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -32,7 +29,11 @@ public class MainIntegrationTest {
                 .build();
 
         SqsClient sqsClient = mock(SqsClient.class);
-        when(sqsClient.receiveMessage(any(ReceiveMessageRequest.class))).thenReturn(messages);
+        when(sqsClient.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenReturn(messages)
+                .thenReturn(ReceiveMessageResponse.builder()
+                    .messages(Collections.emptyList())
+                    .build());
 
         SqsMessenger sqsWrapper = SqsMessenger.getInstance();
         sqsWrapper.client = sqsClient;
@@ -46,8 +47,10 @@ public class MainIntegrationTest {
         items.put("listPrice", AttributeValue.builder().n("100.00").build());
         items.put("storePrice", AttributeValue.builder().n("9.99").build());
         items.put("timestamp", AttributeValue.builder().n("1708103641").build());
-
+        items.put("title", AttributeValue.builder().s("product").build());
+        items.put("image", AttributeValue.builder().s("www").build());
         Map<String, List<Map<String, AttributeValue>>> outer = new HashMap<>();
+
         outer.put("pricing", List.of(items));
 
         BatchGetItemResponse dynamoResponse = BatchGetItemResponse.builder()
@@ -61,6 +64,26 @@ public class MainIntegrationTest {
                 .build();
 
         when(dynamoClient.batchWriteItem(any(BatchWriteItemRequest.class))).thenReturn(mockBatchWriteResponse);
+
+        Map<String, AttributeValue> mockedItem = new HashMap<>();
+        mockedItem.put("upc_store_retailer", AttributeValue.builder().s("example_100_WM").build());
+        mockedItem.put("upc", AttributeValue.builder().s("123").build());
+        mockedItem.put("store", AttributeValue.builder().s("100").build());
+        mockedItem.put("retailer", AttributeValue.builder().s("WM").build());
+        mockedItem.put("stock", AttributeValue.builder().n("100").build());
+        mockedItem.put("listPrice", AttributeValue.builder().n("100.00").build());
+        mockedItem.put("storePrice", AttributeValue.builder().n("10.00").build());
+        mockedItem.put("timestamp", AttributeValue.builder().n("1708563838").build());
+        mockedItem.put("title", AttributeValue.builder().s("product").build());
+        mockedItem.put("image", AttributeValue.builder().s("www").build());
+        List<Map<String, AttributeValue>> mockedItems = Arrays.asList(mockedItem);
+
+        QueryResponse mockQueryResponse = QueryResponse.builder()
+                .count(mockedItems.size())
+                .items(mockedItems)
+                .build();
+
+        when(dynamoClient.query(any(QueryRequest.class))).thenReturn(mockQueryResponse);
 
         DynamoClient dynamoWrapper = DynamoClient.getInstance();
         dynamoWrapper.client = dynamoClient;

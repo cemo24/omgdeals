@@ -10,8 +10,8 @@ public class RequestParams {
     private static final String url = System.getenv("FETCH_URL");
 
     static List<String> STORES = List.of(
-            //30 miles from pittsburgh
-            "3738"//, "2588", "4501", "2300", "1739", "5040", "4643", "2281", "4644", "4847", "2059", "4859", "5381", "2611", "1820", "5339", "1885", "2603", "5379", "3223", "1770", "2420", "1883", "3228", "5241", "3838", "4952"
+            "5040","5381","2281", "2588", "3838", "2603", "1770", "4643", "4644", "2300", "1739", "2420", "1883"
+
     );
 
     static List<String> UPCS_TO_IGNORE = List.of(
@@ -25,7 +25,7 @@ public class RequestParams {
     );
 
     static List<String> PX = List.of(
-            "3:3b5b6a5cb3fe7f31934b5cc1f26eb1ea1c65c2466a27d33536ed0214792c9a3d:iz1BGof+Um991LnQeCRPw48R1l3QgXCgcgzxi9sfrslRoA9ZC8fmRdvZzzYcWtrM9gV+xOA95gjW/ruNnrp8gg==:1000:IF0jbWwou0kVQsVgQBa2Tts9fBKJZTNjUG5v12szgJ0lo194MVfcByp3oGZiRwP8/Qk0Vk8xzvQyBdgljdmx/Qeydb5H6XLbcCmtIPHYC9PS8eHoz5OSOomxlUKpEcNVFT3BvhY786ALSGRrSJiFViUhAjSSZo5Ty5k55qGRqrnUfJNBiXDZWDbx7EN8FuJZv8q4Z8YdCKo8eu8RwE3Rpg==",
+//            "3:3b5b6a5cb3fe7f31934b5cc1f26eb1ea1c65c2466a27d33536ed0214792c9a3d:iz1BGof+Um991LnQeCRPw48R1l3QgXCgcgzxi9sfrslRoA9ZC8fmRdvZzzYcWtrM9gV+xOA95gjW/ruNnrp8gg==:1000:IF0jbWwou0kVQsVgQBa2Tts9fBKJZTNjUG5v12szgJ0lo194MVfcByp3oGZiRwP8/Qk0Vk8xzvQyBdgljdmx/Qeydb5H6XLbcCmtIPHYC9PS8eHoz5OSOomxlUKpEcNVFT3BvhY786ALSGRrSJiFViUhAjSSZo5Ty5k55qGRqrnUfJNBiXDZWDbx7EN8FuJZv8q4Z8YdCKo8eu8RwE3Rpg==",
             "3:c06f6b9b487cbd4dcaf75a90ab687debc938d5c27e13507f65c329b1e1816b87:m298EPvpTjTtiGdWAsnx50Isfbm7o7Ug4EvsQKUwa4btMmlcyQvh/y26NAGD1G11IIODzDZnnetVMrykoA/SSg==:1000:erXNS03Ut+lKRmuK8bievNtu5f9iwVkg8vcUmoKz1Eg2cZ+aKAmda9Z/5v0oUyGc5pAwMOKTlam1W8dTCaCxdlIOfOzaYMK20+cmd2wwQkzGZQRerfBTwPggDfmxoL3el6e0jEECpu86lbTaqIuJXh73GLG9ALkC1DuLtlPN0fa680H7td0cVtotr8MyRBrYkqGalu+7AELs9RoQVQ7hEA==",
             "3:b94f9b3973c716fa54e1b35519d67610238100295e81c29d4cd2d0dd9807a948:CcdLhdiQc9QRahcGU6+VP44ETDsjr8Gx1Oq8FLAjMtJzVDgrVtuLKFv5Y6irAx8DvK+WY0Kftb3OSfVdRbzj4g==:1000:DQg9Sr8YJJ5iwrpYMp3WuMUiEYhmG4e4sXDkzvwsUVMMZ7lNti2rShYb+zNB15agu0fTjmYL6WF91R7nzc6RuonJT1Mc7ez9lHwF5QxOOaIyS7gHr9zMjMPl5ai2i7K19+nyQZMMiePxjiDztESIokbdczAJaqbOMzC42nT8D6iYq3eZL1BXJyH6+YzhVf/TkuOeomH+olMqkRsKMkyvuA==",
             "3:11003d2a5fe2ab8b2085a208b5dc60aec1117a976564a9cedb62d90d80957150:FTajGbgTrKchXyy6D6ouYGDihWbs2YeejVcsOX6PM1rddez9eoqWQ4T6uVDOe/Y6AsRUBvdAepfMry6GeQD8jw==:1000:AvdMsausEAUyM4sgnoea6icF3szyv7+PU++qdBG84KjhbGeS+UEpUYzGGfJ/WaQsmeYiSabZSwh9TSibNEqavLSLqyBHR4mhnMy2aO7+x4eUwD7CYm2GZ62zI+G6hCzj5wB9IhUtf0r45Sx+AKFCH4dZg9J5asz3ZlO24cmiWJfnoDQsgEPYAgt2J2pLzrPjCDCkLSAbGkIhrIh0oJoKHQ==",
@@ -123,8 +123,42 @@ public class RequestParams {
         data2.put("x-o-bu", "WALMART-US");
         data2.put("x-o-device-id", "E2B7270C-18F3-40E1-99E2-51289BE97D20");
 
-        REQ_DATA.add(data2);
-        REQ_DATA.add(data1);
+
+        Map<String, String> dataRR = new HashMap<>();
+        dataRR.put("X-PX-ORIGINAL-TOKEN", "3:b94f9b3973c716fa54e1b35519d67610238100295e81c29d4cd2d0dd9807a948:CcdLhdiQc9QRahcGU6+VP44ETDsjr8Gx1Oq8FLAjMtJzVDgrVtuLKFv5Y6irAx8DvK+WY0Kftb3OSfVdRbzj4g==:1000:DQg9Sr8YJJ5iwrpYMp3WuMUiEYhmG4e4sXDkzvwsUVMMZ7lNti2rShYb+zNB15agu0fTjmYL6WF91R7nzc6RuonJT1Mc7ez9lHwF5QxOOaIyS7gHr9zMjMPl5ai2i7K19+nyQZMMiePxjiDztESIokbdczAJaqbOMzC42nT8D6iYq3eZL1BXJyH6+YzhVf/TkuOeomH+olMqkRsKMkyvuA==");
+        dataRR.put("Cookie", "SPID=fbdc831117b24563fcf6bbab0e087a1fba43bd2f1cbb91554c3df560276d5e8209fe9189f0dcb150a43a924afe9fe412wmjet; TS01a90220=0183b3ebcb2f3cc83ae22add277b0405d600af114f3f49a85145f59cd993b2c47519d6f8f8436f79f1258a70380a920f1a0a2713f3; _lat=56575b4b675e85ad2bf167a9b99b44dbcprof; _m=9; _mc=imODciePckAtiOGry%2BFldav0m9n%2Fju8bmzOy436xTLs%3D; auth=MTAyOTYyMDE4ueK0Yn5ONdeqO5PmcMUVSDoHLwVBANpdMf4PVvDO%2BH7pdDKXc3h501aH8B5hYtau5I4Q4RNEUIBaSWkM7ABNHGI6PCU1Mgg6ypwkV6HUQ03KM%2FMXB5lHtf6pM1H1%2BDLrcru%2FbRQZ4hu5JpN5uYzDEs5oGKTPxg4u5SeRJcb6RCz2vEGTYLx3woxZhMsRXfGVvSA4q7luBEmmNN84QFesJcMwge6mEeCbDv2kax1JgF1yP0ebJ6kqJ8n4jr5MUrlxZuJsHNhNld4O8TPbOlQjMudX9QUDWaoP5h4GnDX%2Fnfcds8xBnLG0uWAX3uJGal5%2B6qP2g8DVG2oLzYyIsd91lYSoS9yCQkMur681%2Fg6v0cw96Ra9B6rSfD4310tBmJ%2BXQz7FN%2F6vpQUmeEN7b1k8P0Ms9THAmtytF0j1XpWFKKA%3D; bstc=T4aJcPEIp2WgXwdM3gNj-4; mobileweb=0; userContext=eyJhZGRyZXNzRGF0YSI6eyJoYXNEZWxpdmVyYWJsZUFkZHJlc3MiOmZhbHNlfSwiaGFzSXRlbVN1YnNjcmlwdGlvbiI6ZmFsc2UsImhhc01lbWJlcnNoaXBJbmZvIjp0cnVlLCJpc0RlZmF1bHQiOmZhbHNlLCJwYXltZW50RGF0YSI6eyJjYXBpdGFsT25lQmFubmVyU25vb3plVFMiOjAsImhhc0NhcE9uZSI6ZmFsc2UsImhhc0NhcE9uZUxpbmtlZCI6ZmFsc2UsImhhc0NyZWRpdENhcmQiOnRydWUsImhhc0RpcmVjdGVkU3BlbmRDYXJkIjpmYWxzZSwiaGFzRUJUIjpmYWxzZSwiaGFzR2lmdENhcmQiOmZhbHNlLCJzaG93Q2FwT25lQmFubmVyIjp0cnVlLCJ3cGx1c05vQmVuZWZpdEJhbm5lciI6dHJ1ZSwicGF5bWVudE1ldGhvZFRhZ3MiOltdfSwicHJvZmlsZURhdGEiOnsiaXNBc3NvY2lhdGUiOmZhbHNlLCJpc1Rlc3RBY2NvdW50IjpmYWxzZSwibWVtYmVyc2hpcE9wdEluIjp7ImlzT3B0ZWRJbiI6ZmFsc2UsIm9wdGVkSW5BdHRyaWJ1dGVJZCI6ImYwZWQ1NWNmLTliZWMtNDBiOS04Y2Y3LTRkOGEyMjZjNmEwYiJ9LCJjdXN0b21lclR5cGUiOiJJTkRJVklEVUFMIiwibWVtYmVyc2hpcFBsYW5UeXBlIjp7InBsYW5UeXBlIjoiTk9ORSJ9fSwic2hvd1NpZ25VcFNwbGFzaCI6ZmFsc2UsImlhcEFzc3VyZWQiOmZhbHNlfQ%3D%3D; vtc=awmGs5u8gSaUiy7WOoZeLw; xptwg=3688593607:139E59729B77A60:31BB2C0:3DF22F37:767DDBAE:7B199060:; xptwj=qq:b3ab29104dee5cfaa661:wTXho568Ak7Iex2tIF62+GSbLctRBc04a7/v6SEY0G2uXR2EXmgfVwFOYnTmb0sE/ln8FFgKsvSyfEQXPTnXYmhmm3CrK1+E1na0br/TLhKdD0eyItyVDAAPoeLH3QrLrp1RaYuIuUWZA9zSGt7cmjlCRjfhnhQxw31CCs2AUANlIT6f+jREx68mdUrsXWp0HNT3inYsCdTWsFoEQ78=; TS012768cf=0183b3ebcb2f3cc83ae22add277b0405d600af114f3f49a85145f59cd993b2c47519d6f8f8436f79f1258a70380a920f1a0a2713f3; abqme=true; AZ_ST_CART=%7B%22mtoken%22%3A%22881%3A22%23328313803%232%3D435338377%238%3D138228171%22%2C%22itoken%22%3A%7B%22UK_CART_OWNER_T_V%22%3A%22362%3A18%23158615149%232%3D209970471%238%3D48968553%22%7D%7D; undefined=OMNI_PROMISE; xpwqd=1; akavpau_p1=1694332170~id=9a6f275c99b3762c59016ed40b0e7271; akavpau_p2=1694332170~id=9a6f275c99b3762c59016ed40b0e7271; xpa=0sRT3|3NjsB|43pSF|6fZdk|8I1CT|8_5Y5|8nsC6|Aj49u|DYky4|G1GxF|GS9nk|HodQJ|K5VQg|KGp15|L79KW|NwI_X|Oreh4|PUr1t|Pvok7|Tqrp7|WnvNk|ZhfXD|bBUoB|bKOq0|e5eiR|fItBa|i-RUL|jSK7c|knpdw|mG0oX|mb2G8|pxrpN|qeUCo|qiDG_|ragbl|sT2Z3|sXodL|vXpEs|wFnDx|zk_gc; xpm=-2%2B1694330577%2B%2B; assortmentStoreId=3285; hasLocData=1; locDataV3=eyJpc0RlZmF1bHRlZCI6ZmFsc2UsImlzRXhwbGljaXQiOmZhbHNlLCJpbnRlbnQiOiJQSUNLVVAiLCJwaWNrdXAiOlt7ImJ1SWQiOiIwIiwibm9kZUlkIjoiMzI4NSIsImRpc3BsYXlOYW1lIjoiQ2VkYXIgSGlsbCBTdXBlcmNlbnRlciIsIm5vZGVUeXBlIjoiU1RPUkUiLCJhZGRyZXNzIjp7InBvc3RhbENvZGUiOiI3NTEwNCIsImFkZHJlc3NMaW5lMSI6IjYyMSBVcHRvd24gQmx2ZCIsImNpdHkiOiJDZWRhciBIaWxsIiwic3RhdGUiOiJUWCIsImNvdW50cnkiOiJVUyIsInBvc3RhbENvZGU5IjoiNzUxMDQtMzUwOCJ9LCJnZW9Qb2ludCI6eyJsYXRpdHVkZSI6MzIuNTk3NTIzLCJsb25naXR1ZGUiOi05Ni45NDcxNzN9LCJpc0dsYXNzRW5hYmxlZCI6dHJ1ZSwic2NoZWR1bGVkRW5hYmxlZCI6dHJ1ZSwidW5TY2hlZHVsZWRFbmFibGVkIjp0cnVlLCJodWJOb2RlSWQiOiIzMjg1Iiwic3RvcmVIcnMiOiIwNjowMC0yMzowMCIsInN1cHBvcnRlZEFjY2Vzc1R5cGVzIjpbIlBJQ0tVUF9DVVJCU0lERSIsIlBJQ0tVUF9JTlNUT1JFIiwiQUNDX0lOR1JPVU5EIiwiQUNDIl0sInNlbGVjdGlvblR5cGUiOiJDVVNUT01FUl9TRUxFQ1RFRCJ9XSwic2hpcHBpbmdBZGRyZXNzIjp7ImxhdGl0dWRlIjozMi45Njg1LCJsb25naXR1ZGUiOi05Ni43OTM1LCJwb3N0YWxDb2RlIjoiNzUyNDgiLCJjaXR5IjoiRGFsbGFzIiwic3RhdGUiOiJUWCIsImNvdW50cnlDb2RlIjoiVVNBIiwiZ2lmdEFkZHJlc3MiOmZhbHNlLCJ0aW1lWm9uZSI6IkFtZXJpY2EvQ2hpY2FnbyJ9LCJhc3NvcnRtZW50Ijp7Im5vZGVJZCI6IjMyODUiLCJkaXNwbGF5TmFtZSI6IkNlZGFyIEhpbGwgU3VwZXJjZW50ZXIiLCJpbnRlbnQiOiJQSUNLVVAifSwiaW5zdG9yZSI6ZmFsc2UsImRlbGl2ZXJ5Ijp7ImJ1SWQiOiIwIiwibm9kZUlkIjoiMzQwNiIsImRpc3BsYXlOYW1lIjoiRGFsbGFzIFN1cGVyY2VudGVyIiwibm9kZVR5cGUiOiJTVE9SRSIsImFkZHJlc3MiOnsicG9zdGFsQ29kZSI6Ijc1MjQ4IiwiYWRkcmVzc0xpbmUxIjoiMTUyMjAgTW9udGZvcnQgUmQiLCJjaXR5IjoiRGFsbGFzIiwic3RhdGUiOiJUWCIsImNvdW50cnkiOiJVUyIsInBvc3RhbENvZGU5IjoiNzUyNDgtNjQwMSJ9LCJnZW9Qb2ludCI6eyJsYXRpdHVkZSI6MzIuOTU5MDQ5LCJsb25naXR1ZGUiOi05Ni44MTY2NH0sImlzR2xhc3NFbmFibGVkIjp0cnVlLCJzY2hlZHVsZWRFbmFibGVkIjp0cnVlLCJ1blNjaGVkdWxlZEVuYWJsZWQiOnRydWUsImFjY2Vzc1BvaW50cyI6W3siYWNjZXNzVHlwZSI6IkRFTElWRVJZX0FERFJFU1MifV0sImh1Yk5vZGVJZCI6IjM0MDYiLCJpc0V4cHJlc3NEZWxpdmVyeU9ubHkiOmZhbHNlLCJzdXBwb3J0ZWRBY2Nlc3NUeXBlcyI6WyJERUxJVkVSWV9BRERSRVNTIiwiQUNDIl0sInNlbGVjdGlvblR5cGUiOiJMU19TRUxFQ1RFRCJ9LCJyZWZyZXNoQXQiOjE2OTQzMzQxNTU4OTMsInZhbGlkYXRlS2V5IjoicHJvZDp2MjpmNWMxNDFmMC1jY2RlLTRlYTUtOTZjOC0xMjg1MjQ4ZGQ0Y2QifQ%3D%3D; ak_bmsc=E830E6C01B91E9689E708EC3AE61FE0C~000000000000000000000000000000~YAAQDdcbuLu8IU+KAQAA9YX4fRVfdXY3jJzhVHwMlKU/gKMXEAl0T1HNtYSRwM6RG4J18XMnOPoIF44fu0AezVY3QGbv/wg8KUrxmm9yi1bEViOum3U5slX7rzRQUxYL5G0mCs4i7vs3FpIQUfjEkFhw++CN0d0IQMj/4sTrKjvUNS65Y2HfguD4DW9iRg4Ys+XADfEoC7u4+7aESjCnPOh3DzbWIqDrMzIdJSbgtSBXarPMlubhGHOnCHx7M6AIu5XH3hW/6m3Hr0C+Kd+KcKmIjyeDsN8Q//iG7qxy6AXVazd+2TKEqpg4lkvesOycQj4zu9apC+/1HG8wEz9RzO89gYDgRur7eC1Q3rZOQ4d3JIM2lm0x8OV+s6gjRR350Z6enLzq6gJSuwBF; _tsc=MTQyODYyMDIyYdrE0CTAxZlVfGoMou6gqC8NxG0%2BPow4TLgoxw6hhufP0V3PPLThVYYNen32YjeWDTneJrPVcpAgCVwvJ%2BVeOByKgwkDYFB0ZItzwYWYJmO9mHWFv%2F188f2%2BugBRuxjHC%2FNRtcHW2i3EqXpy0DxewvGWNZOaUQpiCLaN2mRQ2DW3YFljOjhfVFeJnm%2FcN9vgxBWdrSv25mHuqK5tCaOMQi9Bz7CPCjyuW1f56Kf6c5eh7rgMQC64Efre1rQVaDAiMXdtvnZ0hRVarADNjYjICCfXwYzx1dJncaaGTV3v4XbpMO8D8NgvRYG613j%2Fi2em6w0uKuDUSjOxjI16GPVWWwzspzIyAawnsius7ViwoWhTFjqfcjtnR60bl%2F34Qkg9tQweDYqABEJrvbR9Vf2lsnl4FjimFm62BMFswaCQ8w%3D%3D; CID=f5c141f0-ccde-4ea5-96c8-1285248dd4cd; _vc=sDWUB%2FkHgtk2FpLJxlaWFp%2Fe51J4%2FNtRZWNqH6xUIzw%3D; customer=%7B%22firstName%22%3A%22Not%22%2C%22lastNameInitial%22%3A%22N%22%7D; hasCID=1; type=REGISTERED; ACID=95234ee4-b051-4888-8da1-dc7a7f933a2a");
+        dataRR.put("x-o-platform-version", "23.35.0");
+        dataRR.put("x-o-device", "iPhone12,8");
+        dataRR.put("x-enable-server-timing", "1");
+        dataRR.put("X-PX-AUTHORIZATION", "3");
+        dataRR.put("x-o-platform", "ios");
+        dataRR.put("x-apollo-operation-id", "4ad12f8838f6c60c2ba1b5bb01bc20a363f2b82e7a7e2d89f9b0a99870d01c88");
+        dataRR.put("DEVICE_PROFILE_REF_ID", "2266A66E-19DF-401D-B7D3-38A7FBF2E09E");
+        dataRR.put("x-o-segment", "oaoh");
+        dataRR.put("x-o-device-id", "08F5C25E-0566-4607-AE9D-42972D3B17DF");
+        dataRR.put("x-latency-trace", "1");
+        dataRR.put("Accept", "*/*");
+        dataRR.put("x-wm-sid", "7E1C4481-55BA-435E-9B37-CECAD6B14D88");
+        dataRR.put("x-wm-client-name", "glass");
+        dataRR.put("x-o-mart", "B2C");
+        dataRR.put("x-apollo-operation-name", "getScannedProductSubstitutions");
+        dataRR.put("x-o-fuzzy-install-date", "1694100000000");
+        dataRR.put("x-o-tp-phase", "tp5");
+        dataRR.put("Accept-Language", "en-US");
+        dataRR.put("Host", "www.walmart.com");
+        dataRR.put("Connection", "keep-alive");
+        dataRR.put("Accept-Encoding", "gzip, deflate, br");
+        dataRR.put("x-wm-vid", "C8F9E6A5-FAB8-4F82-BD7D-6C965AD63DF6");
+        dataRR.put("WM_MP", "true");
+        dataRR.put("x-o-bu", "WALMART-US");
+        dataRR.put("User-Agent", "WMT1H/23.35 iOS/15.4.1");
+        dataRR.put("traceparent", "00-628cbd76ee58599e65990bc28b71ffbb-eb0995d05ad9a552-00");
+//        dataRR.put("wm_instore_id", "5823");
+//        dataRR.put("url", "https://www.walmart.com/orchestra/snb/graphql/getScannedProductSubstitutions/4ad12f8838f6c60c2ba1b5bb01bc20a363f2b82e7a7e2d89f9b0a99870d01c88/barcode?barcode=816522025267&barcodeType=upc&id=4ad12f8838f6c60c2ba1b5bb01bc20a363f2b82e7a7e2d89f9b0a99870d01c88&variables=%7B%22channel%22:%22Mobile%22,%22p13N%22:%7B%22barcode%22:%22816522025267%22,%22barcodeType%22:%22upc%22,%22modules%22:%5B%7B%22moduleId%22:%22234-sdfsfvns-sdfdskvl%22,%22moduleType%22:%22PersonalizedLabels%22%7D%5D,%22reqId%22:%22DFD7B646-7003-450A-8F85-E35833B996CD%22,%22userClientInfo%22:%7B%22callType%22:%22CLIENT%22,%22deviceType%22:%22IOS%22%7D,%22userReqInfo%22:%7B%22refererContext%22:%7B%22source%22:%22MobileUniversalScannerSubstitutions%22%7D%7D%7D,%22p13nCls%22:%7B%22barcode%22:%22816522025267%22,%22barcodeType%22:%22upc%22,%22reqId%22:%22DFD7B646-7003-450A-8F85-E35833B996CD%22,%22userClientInfo%22:%7B%22callType%22:%22CLIENT%22,%22deviceType%22:%22IOS%22%7D,%22userReqInfo%22:%7B%22cid%22:%22f5c141f0-ccde-4ea5-96c8-1285248dd4cd%22%7D%7D,%22pageType%22:%22MobileSearchProductScanner%22,%22tempo%22:%7B%22params%22:%5B%5D,%22targeting%22:%22%7B%5C%22deviceType%5C%22:%5C%22ios%5C%22,%5C%22deviceVersion%5C%22:%5C%2223.35.0%5C%22,%5C%22storeTransactability%5C%22:%5C%22nonTransactable%5C%22,%5C%22userState%5C%22:%5C%22loggedIn%5C%22%7D%22%7D,%22tenant%22:%22WM_GLASS%22%7D");
+
+
+        REQ_DATA.add(dataRR);
+//        REQ_DATA.add(data1);
         return REQ_DATA;
     }
 

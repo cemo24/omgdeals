@@ -68,7 +68,11 @@ public class SqsMessengerTest {
                 .messages(Collections.singletonList(message))
                 .build();
 
-        when(mockClient.receiveMessage(any(ReceiveMessageRequest.class))).thenReturn(messages);
+        when(mockClient.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenReturn(messages)
+                .thenReturn(ReceiveMessageResponse.builder()
+                    .messages(Collections.emptyList())
+                    .build());
 
         sqs.client = mockClient;
 
@@ -76,4 +80,3 @@ public class SqsMessengerTest {
         assert(!returnedMessages.isEmpty());
     }
 }
-

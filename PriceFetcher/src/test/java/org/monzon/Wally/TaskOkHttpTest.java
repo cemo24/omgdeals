@@ -1,12 +1,12 @@
 package org.monzon.Wally;
 
+import net.razorvine.pickle.Unpickler;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.ByteArrayOutputStream;
@@ -24,7 +24,6 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = TestConfig.class)
 @TestPropertySource("classpath:test.properties")
 public class TaskOkHttpTest {
 
@@ -36,6 +35,12 @@ public class TaskOkHttpTest {
 
     @MockBean
     Request.Builder requestBuilder;
+
+    @MockBean
+    FileUtils utils;
+
+    @MockBean
+    Unpickler unpickler;
 
     @Autowired
     private TaskOkHttp taskOkHttp;

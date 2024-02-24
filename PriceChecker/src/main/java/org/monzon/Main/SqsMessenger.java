@@ -45,38 +45,78 @@ public class SqsMessenger {
     }
 
     public List<Wmdata> getMessages() {
-
         List<Wmdata> receivedMessages = new ArrayList<>();
         logger.info("SQS - Getting Messages");
 
-        ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
-                .queueUrl(SQS_URL)
-                .maxNumberOfMessages(10)
-                .build();
+        int maxMessagesPerRequest = 10;
+        boolean moreMessages = true;
 
-        List<Message> messages = client.receiveMessage(receiveRequest).messages();
+        while (moreMessages) {
+            ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
+                    .queueUrl(SQS_URL)
+                    .maxNumberOfMessages(maxMessagesPerRequest)
+                    .build();
 
-        if (!messages.isEmpty()) {
+            List<Message> messages = client.receiveMessage(receiveRequest).messages();
 
-            for (Message message : messages) {
-                Wmdata messageObject;
+            if (!messages.isEmpty()) {
+                for (Message message : messages) {
+                    Wmdata messageObject;
 
-                try {
-                    messageObject = mapper.readValue(message.body(), Wmdata.class);
-                    receivedMessages.add(messageObject);
-                } catch (JsonProcessingException e) {
-                    logger.error("Error Mapping From SQS", e);
-                    continue;
+                    try {
+                        messageObject = mapper.readValue(message.body(), Wmdata.class);
+                        receivedMessages.add(messageObject);
+                    } catch (JsonProcessingException e) {
+                        logger.error("Error Mapping From SQS", e);
+                        continue;
+                    }
+
+                    DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
+                            .queueUrl(SQS_URL)
+                            .receiptHandle(message.receiptHandle())
+                            .build();
+                    client.deleteMessage(deleteRequest);
                 }
-
-                DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
-                        .queueUrl(SQS_URL)
-                        .receiptHandle(message.receiptHandle())
-                        .build();
-                client.deleteMessage(deleteRequest);
-
+            } else {
+                moreMessages = false;
             }
         }
+
         return receivedMessages;
     }
+//    public List<Wmdata> getMessages() {
+//
+//        List<Wmdata> receivedMessages = new ArrayList<>();
+//        logger.info("SQS - Getting Messages");
+//
+//        ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
+//                .queueUrl(SQS_URL)
+//                .maxNumberOfMessages(10)
+//                .build();
+//
+//        List<Message> messages = client.receiveMessage(receiveRequest).messages();
+//
+//        if (!messages.isEmpty()) {
+//
+//            for (Message message : messages) {
+//                Wmdata messageObject;
+//
+//                try {
+//                    messageObject = mapper.readValue(message.body(), Wmdata.class);
+//                    receivedMessages.add(messageObject);
+//                } catch (JsonProcessingException e) {
+//                    logger.error("Error Mapping From SQS", e);
+//                    continue;
+//                }
+//
+//                DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
+//                        .queueUrl(SQS_URL)
+//                        .receiptHandle(message.receiptHandle())
+//                        .build();
+//                client.deleteMessage(deleteRequest);
+//
+//            }
+//        }
+//        return receivedMessages;
+//    }
 }
