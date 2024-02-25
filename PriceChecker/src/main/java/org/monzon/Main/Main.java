@@ -26,11 +26,11 @@ public class Main {
         if(!filteredMessages.isEmpty()){
 
             for (int i = 0; i < filteredMessages.size(); i += 25) { //batchWrite limit
-                int endIndex = Math.min(i + batchSize, filteredMessages.size());
+                int endIndex = Math.min(i + 25, filteredMessages.size());
                 List<Wmdata> currentBatch = filteredMessages.subList(i, endIndex);
                 dynamoClient.putItems(currentBatch);
             }
-            
+
         }
     }
 }
