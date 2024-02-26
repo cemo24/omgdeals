@@ -11,7 +11,7 @@ env:
   AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
   SQS_URL: ${{ secrets.SQS_URL }}
   FETCH_URL: ${{ secrets.FETCH_URL }}
-  AWS_S3_BUCKET: ${{ secrets.FRONTEND_BUCKET }}
+  AWS_S3_BUCKET: omgdeals
 
 jobs:
 
