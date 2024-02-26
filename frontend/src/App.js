@@ -69,7 +69,7 @@ const App = () => {
             <Paper elevation={3} style={{ padding: 16 }}>
 
             <Typography style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography>  <img src={`${item.image}?odnHeight=100&odnWidth=100`}/></Typography>
+              <Typography>  <img src={`${item.image}?odnHeight=100&odnWidth=100`} alt=""/></Typography>
               <span><Typography variant="subtitle2" align="right">{formatTimestamp(timeNow, item.timestamp)}</Typography></span>
                </Typography>
 <Typography>{item.title.slice(0, 36)}</Typography>
