@@ -38,8 +38,8 @@ jobs:
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
-        with:
-          SOURCE_DIR: frontend/build/
+        env:
+          SOURCE_DIR: ./frontend/build/
 
 #  build-push-pricefetcher:
 #    runs-on: ubuntu-latest
