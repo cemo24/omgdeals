@@ -39,8 +39,7 @@ jobs:
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
-          src: frontend/build/
-          dest: ${{ secrets.FRONTEND_BUCKET }}
+          SOURCE_DIR: frontend/build/
 
 #  build-push-pricefetcher:
 #    runs-on: ubuntu-latest
