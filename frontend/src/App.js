@@ -6,7 +6,6 @@ import stores from './StoreCoordinates';
 
 function formatTimestamp(timeNow, timestampInSeconds) {
   const timestampInMilliseconds = timestampInSeconds * 1000;
-  const date = new Date(timestampInMilliseconds);
   const timeDifferenceInMilliseconds = timeNow - timestampInMilliseconds;
   const hoursDifference = Math.floor(timeDifferenceInMilliseconds / (60 * 60 * 1000));
   const minutesDifference = Math.floor((timeDifferenceInMilliseconds % (60 * 60 * 1000)) / (60 * 1000));
@@ -70,7 +69,7 @@ const App = () => {
             <Paper elevation={3} style={{ padding: 16 }}>
 
             <Typography style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography>  <img src={`${item.image}?odnHeight=100&odnWidth=100`} alt="Item Image" /></Typography>
+              <Typography>  <img src={`${item.image}?odnHeight=100&odnWidth=100`}/></Typography>
               <span><Typography variant="subtitle2" align="right">{formatTimestamp(timeNow, item.timestamp)}</Typography></span>
                </Typography>
 <Typography>{item.title.slice(0, 36)}</Typography>
