@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.zip.ZipException;
 
 @Component
 public class Runner{
@@ -55,10 +56,13 @@ public class Runner{
         ExecutorService airplane = Executors.newFixedThreadPool(Config.MAX_THREADS);
         List<TaskOkHttp> taskList = new ArrayList<>();
 
+        var totalHeaders = RequestParams.getReqHeaders();
+
         for (Map.Entry<String, Double> upc : sortedUpcs.entrySet()) {
 
             int storeIndex = 0;
             upcIndex++;
+
             logger.info(String.format("At UPC# %d", upcIndex));
 
             for (String store : RequestParams.STORES) {
@@ -67,7 +71,7 @@ public class Runner{
 
                 ProxyCreds proxyIt = RequestParams.PROXIES.get(proxyIndex % RequestParams.PROXIES.size());
                 String pxIt = RequestParams.PX.get(proxyIndex % RequestParams.PX.size());
-                var wmheadersIt = RequestParams.getReqHeaders().get(wmheadersIndex % RequestParams.getReqHeaders().size());
+                var wmheadersIt = totalHeaders.get(wmheadersIndex % totalHeaders.size());
 
                 try {
                     TaskOkHttp thisTask = context.getBean(TaskOkHttp.class);
@@ -92,8 +96,10 @@ public class Runner{
                     logger.info(String.format("invoking batch %s %s %s", store, upc.getKey(), RequestParams.PROXIES.get(proxyIndex).getIp()));
                     List<Future<Wmdata>> results = airplane.invokeAll(taskList);
 
-                    for (Future<Wmdata> resultTask : results) {
+                    int taskCounter = -1;
 
+                    for (Future<Wmdata> resultTask : results) {
+                        taskCounter++;
                         try{
                             Wmdata result = resultTask.get();
 
@@ -106,8 +112,27 @@ public class Runner{
                             }
                             latestResults.add(result);
 
-                        } catch(Exception e){
+                        } catch(Exception e) {
+
                             logger.error("Error Processing Task", e);
+
+                            if (e instanceof ExecutionException && e.getCause() instanceof ZipException) {
+
+                                TaskOkHttp originalTask = taskList.get(taskCounter);
+                                Map<String, String> staleHeaders = originalTask.wm_headers;
+
+                                for(int i = 0; i < totalHeaders.size(); i++){
+                                    if(totalHeaders.get(i) == staleHeaders){
+                                        totalHeaders.remove(i);
+                                        logger.error("Removed Stale Headers");
+                                        if (totalHeaders.size == 0){
+                                            throw IllegalArgumentException("All Headers Are Stale");
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+
                         }
                     }
                     seatCounter = 0;

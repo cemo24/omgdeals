@@ -23,14 +23,14 @@ public class Main {
 
         List<Wmdata> filteredMessages = dynamoClient.filterMessages(sqsMessages);
 
-        if(!filteredMessages.isEmpty()){
+        int dynamoWriteLimit = 25;
 
-            for (int i = 0; i < filteredMessages.size(); i += 25) { //batchWrite limit
-                int endIndex = Math.min(i + 25, filteredMessages.size());
+        if(!filteredMessages.isEmpty()){
+            for (int i = 0; i < filteredMessages.size(); i += dynamoWriteLimit) {
+                int endIndex = Math.min(i + dynamoWriteLimit, filteredMessages.size());
                 List<Wmdata> currentBatch = filteredMessages.subList(i, endIndex);
                 dynamoClient.putItems(currentBatch);
             }
-
         }
     }
 }

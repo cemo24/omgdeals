@@ -35,7 +35,7 @@ public class TaskOkHttp implements Callable<Wmdata>{
     private String store;
     private String px_header;
     private ProxyCreds proxy;
-    private Map<String, String> wm_headers;
+    protected Map<String, String> wm_headers;
 
     private static final Logger logger = LoggerFactory.getLogger(TaskOkHttp.class);
     public TaskOkHttp createTaskOkHttp() {
@@ -89,14 +89,6 @@ public class TaskOkHttp implements Callable<Wmdata>{
         wow = br.readLine();
 
         response.close();
-
-
-
-
-
-
-
-
 
         if (wow == null) {
             logger.info("Response Body Empty");
@@ -267,5 +259,4 @@ public class TaskOkHttp implements Callable<Wmdata>{
         }
         return new Wmdata();
     }
-
 }

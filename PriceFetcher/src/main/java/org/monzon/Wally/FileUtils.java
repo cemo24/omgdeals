@@ -27,7 +27,7 @@ public class FileUtils {
                 logger.error("File Not Found");
                 return null;
             }
-        } catch (Exception e){//{//(IOException e) {
+        } catch (Exception e){
             logger.error("Error reading file", e);
             return null;
         }

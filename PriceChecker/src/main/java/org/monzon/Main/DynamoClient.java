@@ -41,7 +41,6 @@ public class DynamoClient {
 
         HashMap<String, Wmdata> recentMessages = new HashMap<>();
 
-
         for (Wmdata wmdata : messages) {
             if(wmdata.getUpc_store_retailer() == null || wmdata.getUpc_store_retailer().isEmpty()){
                 continue;

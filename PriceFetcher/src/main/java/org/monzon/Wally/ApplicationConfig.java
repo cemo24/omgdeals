@@ -18,7 +18,6 @@ public class ApplicationConfig {
     public OkHttpClient okHttpClient() {
         return new OkHttpClient.Builder()
                 .connectionPool(new ConnectionPool(30, 5, TimeUnit.SECONDS))
-                //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy.getIp(), proxy.getPort())))
                 .build();
     }
 
