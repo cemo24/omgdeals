@@ -38,10 +38,11 @@ jobs:
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
+          AWS_S3_BUCKET: ${{ secrets.FRONTEND_BUCKET }}
           aws-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           src: frontend/build/
-          dest: s3://omgdeals/
+          dest: ${{ secrets.FRONTEND_BUCKET }}
 
   build-push-pricefetcher:
     runs-on: ubuntu-latest
