@@ -48,7 +48,7 @@ const App = () => {
 
     const fetchData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1/frontpage?hrs=220');
+        const response = await fetch('http://service.omgdeals.net/frontpage?hrs=220');
         const jsonData = await response.json();
         console.log(jsonData);
         setData(jsonData);

@@ -14,33 +14,34 @@ env:
 
 jobs:
 
-#  deploy-frontend:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Setup Node.js
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '16'
-#
-#      - name: Install dependencies
-#        run: |
-#          cd frontend
-#          npm install
-#
-#      - name: Build frontend
-#        run: |
-#          cd frontend
-#          npm run build
-#
-#      - name: Deploy pages
-#        uses: JamesIves/github-pages-deploy-action@4.1.2
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          branch: pages
-#          folder: frontend/build
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          aws-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          src: frontend/build/
+          dest: s3://omgdeals/
 
   build-push-pricefetcher:
     runs-on: ubuntu-latest
