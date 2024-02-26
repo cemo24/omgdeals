@@ -125,8 +125,8 @@ public class Runner{
                                     if(totalHeaders.get(i) == staleHeaders){
                                         totalHeaders.remove(i);
                                         logger.error("Removed Stale Headers");
-                                        if (totalHeaders.size == 0){
-                                            throw IllegalArgumentException("All Headers Are Stale");
+                                        if (totalHeaders.size() == 0){
+                                            throw new IllegalArgumentException("All Headers Are Stale");
                                         }
                                         break;
                                     }
