@@ -1,0 +1,22 @@
+##TURNED OFF DUE TO PRICING
+#stages:
+#  - deploy-fetch
+#  - deploy-check
+#
+#deploy_daily_fetch_task:
+#  stage: deploy-fetch
+#  script:
+#    - aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} --service PRICEFETCHER --force-new-deployment
+#  only:
+#    - schedules
+#  except:
+#    - deploy
+#
+#deploy_daily_check_task:
+#  stage: deploy-check
+#  script:
+#    - aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} --service PRICECHECKER --force-new-deployment
+#  only:
+#    - schedules
+#  except:
+#    - deploy

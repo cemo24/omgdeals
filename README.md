@@ -1,2 +1,2 @@
-# fetchling
-A fast deal searching engine.
+# omgdeals
+
