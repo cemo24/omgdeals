@@ -36,8 +36,6 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.6'
 }
 
-
-
 application {
     mainClassName = 'org.monzon.Main.Main'
 }

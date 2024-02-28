@@ -30,7 +30,6 @@ const App = () => {
   const [location, setLocation] = useState(false);
   let timeNow = new Date().getTime();
 
-
   useEffect(() => {
 
       if ('geolocation' in navigator) {
